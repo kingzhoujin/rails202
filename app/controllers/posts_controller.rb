@@ -1,41 +1,26 @@
 class PostsController < ApplicationController
-  def index
-    @posts = Post.all
-  end
-
-  def show
-    @post = Post.find(params[:group_id])
-  end
 
   def new
+    @group = Group.find(params[:group_id])
     @post = Post.new
   end
 
   def create
+    @group = Group.find(params[:group_id])
     @post = Post.new(post_params)
+    @post.group = @group
+    @post.user = current_user
     if @post.save
-      redirect_to posts_path ,
+      redirect_to group_path(@group)
     else
       render :new
     end
   end
 
-  def edit
-    @post = Post.find(params[:group_id])
-  end
+  private
 
-  def update
-    @post = Post.find(params[:group_id])
-   if  @post.update(post_params)
-    redirect_to posts_path ,
-   else
-    render :edit
-   end
+  def post_params
+    params.require(:post).permit(:content)
   end
-
-   def destroy
-     @post = Post.find(params[:group_id])
-     @post.delete
-   end
 
 end
